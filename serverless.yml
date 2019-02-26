@@ -35,9 +35,19 @@ provider:
 
 
 functions:
-  RequestUnicorn:
-    handler: handlers/get_unicorn.handler
-    description: "Request a Unicorn."
+  RequestUnicornInvoke:
+    handler: handlers/get_unicorn.handler_invoke
+    description: "Request a Unicorn via Lambda client invocation."
+    memorySize: 128
+    timeout: 29
+    environment:
+      DYNAMODB_TABLE:
+        Ref: UnicornsTable
+      UNICORN_HASH_KEY: "${self:custom.unicorn_hash_key}"
+
+  RequestUnicornApig:
+    handler: handlers/get_unicorn.handler_apig
+    description: "Request a Unicorn via Lambda client invocation."
     memorySize: 128
     timeout: 29
     environment:
@@ -90,6 +100,17 @@ resources:
               - ".execute-api."
               - Ref: AWS::Region
               - ".amazonaws.com/${self:custom.stage}"
+
+    RequestUnicornInvokeArnSsmParam:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Description: "Arn of RequestUnicorn Lambda function"
+        Type: String
+        Name: "/${self:service}/${self:provider.stage}/RequestUnicornInvokeArn"
+        Value:
+          Fn::GetAtt:
+            - RequestUnicornInvokeLambdaFunction
+            - Arn
 
 
   Outputs:

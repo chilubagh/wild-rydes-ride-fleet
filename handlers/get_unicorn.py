@@ -31,8 +31,15 @@ def _get_unicorn():
     return unicorn
 
 
-def handler(event, context):
-    '''Function entry'''
+def handler_invoke(event, contect):
+    '''Function entry for Lambda synchronous invoke'''
+    _logger.debug('Request: {}'.format(json.dumps(event)))
+
+    return _get_unicorn()
+
+
+def handler_apig(event, context):
+    '''Function entry for APIG'''
     _logger.debug('Request: {}'.format(json.dumps(event)))
 
     resp = _get_unicorn()
