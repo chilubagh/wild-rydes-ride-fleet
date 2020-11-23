@@ -3,4 +3,3 @@ moto
 mypy
 pylint
 pytest
-py
